@@ -1,4 +1,4 @@
-const axios = require("axios");
+const axios = require("axios"), { YabooksApp } = require("./app.js");
 
 module.exports = (
 {
@@ -31,7 +31,7 @@ module.exports = (
 
             // register app with Yabooks core
             let config = { headers: { authorization: `Bearer ${session.data.token}` } };
-            return await axios.patch(`${baseUrl}/api/v1/apps/${appId}`, appDetails, config);
+            return new YabooksApp(baseUrl, await axios.patch(`${baseUrl}/api/v1/apps/${appId}`, appDetails, config));
         }
         catch(error)
         {
