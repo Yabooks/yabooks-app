@@ -24,7 +24,7 @@ class YabooksApp
         // TODO
     }
 
-    // TODO post patch update delete
+    // TODO post put patch update delete
 
     async sql(documentId, sql, params)
     {
