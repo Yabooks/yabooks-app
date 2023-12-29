@@ -55,3 +55,16 @@ let identities = await core.get("/api/v1/identities");
 // perform SQL statements on a SQLite document
 await core.sql("507f1f77bcf86cd799439011", "insert into foo (bar) values (?)", [ "ACME, Inc." ]);
 ```
+
+To obtain a user session, an OAuth flow can be initiated:
+
+```js
+expressApp.get("/login", async (req, res) => {
+    await core.oauth(res);
+});
+
+expressApp.get("/oauth", async (req, res) => {
+    let token = await core.oauth(req);
+    let authenticatedCoreConnection = core.asUser(token);
+}):
+```
