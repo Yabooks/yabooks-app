@@ -1,4 +1,4 @@
-const axios = require("axios"), SqlString = require("sqlstring");
+const axios = require("axios"), SqlString = require("sqlstring-sqlite");
 
 class YabooksApp
 {

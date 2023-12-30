@@ -19,7 +19,7 @@
   "dependencies": {
     "axios": "^1.6.2",
     "express-http-proxy": "^2.0.0",
-    "sqlstring": "^2.3.3",
+    "sqlstring-sqlite": "^0.1.1",
     "wstcp": "^1.0.6"
   }
 }
