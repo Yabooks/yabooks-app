@@ -83,7 +83,8 @@ class YabooksApp
 
         // escape SQL statement and forward to core via http request
         let query = SqlString.format(sql, params), isSelect = query.toLowerCase().includes("select");
-        return await this.post(`/api/v1/documents/${documentId}/sqlite?results=${isSelect}`, query, { headers: { "content-type": "application/sql" } });
+        query = await this.post(`/api/v1/documents/${documentId}/sqlite?results=${isSelect}`, query, { headers: { "content-type": "application/sql" } });
+        return query.data;
     }
 }
 
