@@ -62,6 +62,11 @@ class YabooksApp
         return await this.coreRequest("PATCH", url, data, config);
     }
 
+    async put(url, data, config)
+    {
+        return await this.coreRequest("PUT", url, data, config);
+    }
+
     async delete(url, data, config)
     {
         return await this.coreRequest("DELETE", url, data, config);
