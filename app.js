@@ -41,7 +41,7 @@ class YabooksApp
         // authenticate request
         if(!config.headers) config.headers = {};
         config.headers.authorization = `Bearer ${this.appSessionToken}`;
-        config.headers.cookie = `user_token=${this.userSessionToken}`;
+        if(this.userSessionToken) config.headers.cookie = `user_token=${this.userSessionToken}`;
 
         // send http request to core and return response
         return await axios({ method: httpMethod, url, data, ...config });
@@ -69,8 +69,21 @@ class YabooksApp
 
     async sql(documentId, sql, params)
     {
-        let query = SqlString.format(sql, params);
-        return await this.post(`/api/v1/documents/${documentId}/sqlite`, query);
+        // document id is optional and defaults to "app-config"
+        if([ "object", "undefined" ].includes(typeof sql))
+        {
+            params = sql;
+            sql = documentId;
+            documentId = "app-config";
+        }
+
+        // input validation
+        if(typeof sql !== "string")
+            throw new Error("provided SQL query is not a string");
+
+        // escape SQL statement and forward to core via http request
+        let query = SqlString.format(sql, params), isSelect = query.toLowerCase().includes("select");
+        return await this[isSelect ? "get" : "post"](`/api/v1/documents/${documentId}/sqlite`, query, { headers: { "content-type": "application/sql" } });
     }
 }
 
