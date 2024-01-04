@@ -34,7 +34,8 @@ module.exports = (
 
             // register app with Yabooks core
             let config = { headers: { authorization: `Bearer ${session.data.token}` } };
-            return new YabooksApp(baseUrl, await axios.patch(`${baseUrl}/api/v1/apps/${appId}`, appDetails, config), session.data.token);
+            await axios.patch(`${baseUrl}/api/v1/apps/${appId}`, appDetails, config);
+            return new YabooksApp(baseUrl, { ...appDetails, _id: appId, secret }, session.data.token);
         }
         catch(error)
         {
