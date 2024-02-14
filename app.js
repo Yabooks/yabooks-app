@@ -53,7 +53,7 @@ class YabooksApp
             try
             {
                 let data = await this.get(`/oauth/token?code=${re.query.code}`);
-                return { token: data.data.token, state: req.query.state };
+                return { token: data.data.token, state: re.query.state };
             }
             catch(x)
             {
