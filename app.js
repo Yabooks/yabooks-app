@@ -44,9 +44,9 @@ class YabooksApp
     {
         if(re.redirect) // treat `re` as express response
         {
-            re.redirect(`${this.baseUrl}/oauth/auth?response_type=code&state=` + encodeUriComponent(state) +
-                "&client_id=" + encodeUriComponent(this.getAppId()) +
-                "&redirect_uri=" + encodeUriComponent(redirect_uri));
+            re.redirect(`${this.baseUrl}/oauth/auth?response_type=code&state=` + encodeURIComponent(state) +
+                "&client_id=" + encodeURIComponent(this.getAppId()) +
+                "&redirect_uri=" + encodeURIComponent(redirect_uri));
         }
 
         else if(re.query.code) // treat `re` as express request that is received via the callback url
