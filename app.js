@@ -57,7 +57,7 @@ class YabooksApp
             }
             catch(x)
             {
-                throw new Error("could not finalize oauth flow", x);
+                throw new Error("could not finalize oauth flow", { cause: x });
             }
 
         else throw new Error(`express request or response expected, but ${re} provided`);
