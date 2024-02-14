@@ -19,6 +19,7 @@ let core = await YabooksCore.registerApp({
     bundle_id: "com.example.test",
     name: "My Local App",
     link: "http://localhost:8080/",
+    api: "http://localhost:8080",
     icon: "http://localhost:8080/icon.svg",
     redirect_uris: [ "http://localhost:8080/oauth" ]
 });
@@ -56,6 +57,7 @@ let identities = await core.get("/api/v1/identities");
 await core.sql("507f1f77bcf86cd799439011", "insert into foo (bar) values (?)", [ "ACME, Inc." ]);
 ```
 
+## communication in a user's context
 To obtain a user session, an OAuth flow can be initiated:
 
 ```js
@@ -64,7 +66,30 @@ expressApp.get("/login", async (req, res) => {
 });
 
 expressApp.get("/oauth", async (req, res) => {
-    let token = await core.oauth(req);
-    let authenticatedCoreConnection = core.asUser(token);
+    let context = await core.oauth(req);
+    let authenticatedCoreConnection = core.asUser(context.token);
 }):
+```
+
+# communication with another app
+
+## sending a message
+To send an API request to another app:
+
+```js
+let otherApp = await core.app("com.some-other-app");
+let data = await otherApp.get("/api/endpoint");
+```
+
+## receiving a message
+To verify which app an incoming API call comes from:
+
+```js
+expressApp.get("/api/endpoint", async (req, res) => {
+    let authenticated = await core.verifyAppToken(req);
+
+    if(authenticated)
+        res.send(`Welcome, ${authenticated}!`);
+    else res.status(401).send("Sorry!");
+});
 ```

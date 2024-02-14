@@ -15,9 +15,52 @@ class YabooksApp
         return this.appDetails._id;
     }
 
-    oauth() // oauth(res) --> oauth(req)
+    async app(appId) // provides a possibility to access other apps
     {
-        // TODO
+        let req = await this.get(`/api/v1/apps/${appId}`);
+        let appBaseUrl = req.data.api;
+        let appDetails = req.data;
+        let appAccessToken = req.data.apiToken;
+        return new YabooksApp(appBaseUrl, appDetails, appAccessToken);
+    }
+
+    async verifyAppToken(token) // verify if a request from another app is authenticated
+    {
+        try
+        {
+            if(token.headers?.authorization) // extract token from a express request
+                token = token.headers.authorization.substring("Bearer ".length);
+
+            let payload = await this.get(`/api/v1/apps/${this.getAppId()}/verify-token/${token}`); // FIXME might use bundle id instead
+            return payload.data.aud || true;
+        }
+        catch(x)
+        {
+            return false;
+        }
+    }
+
+    async oauth(re, redirect_uri = this?.appDetails?.redirect_uris?.[0], state = "") // oauth(res) --> oauth(req) --> user session token
+    {
+        if(re.redirect) // treat `re` as express response
+        {
+            re.redirect(`${this.baseUrl}/oauth/auth?response_type=code&state=` + encodeUriComponent(state) +
+                "&client_id=" + encodeUriComponent(this.getAppId()) +
+                "&redirect_uri=" + encodeUriComponent(redirect_uri));
+        }
+
+        else if(re.query.code) // treat `re` as express request that is received via the callback url
+            try
+            {
+                let data = await this.get(`/oauth/token?code=${re.query.code}`);
+                return { token: data.data.token, state: req.query.state };
+            }
+            catch(x)
+            {
+                throw new Error("could not finalize oauth flow", x);
+            }
+
+        else throw new Error(`express request or response expected, but ${re} provided`);
     }
 
     asUser(userSessionToken)
