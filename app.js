@@ -57,6 +57,7 @@ class YabooksApp
             }
             catch(x)
             {
+                console.error(x);
                 throw new Error("could not finalize oauth flow", { cause: x });
             }
 
