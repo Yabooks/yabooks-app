@@ -52,13 +52,13 @@ class YabooksApp
         else if(re.query.code) // treat `re` as express request that is received via the callback url
             try
             {
-                let data = await this.get(`/oauth/token?code=${re.query.code}`);
+                let data = await this.post("/oauth/token", { code: re.query.code, client_secret: this.appDetails.secret });
                 return { token: data.data.token, state: re.query.state };
             }
             catch(x)
             {
-                console.error(x);
-                throw new Error("could not finalize oauth flow", { cause: x });
+                let msg = x?.response?.data?.error || x?.message || x;
+                throw new Error("could not finalize oauth flow: " + msg, { cause: x });
             }
 
         else throw new Error(`express request or response expected, but ${re} provided`);
