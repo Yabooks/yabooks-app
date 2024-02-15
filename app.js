@@ -84,8 +84,7 @@ class YabooksApp
 
         // authenticate request
         if(!config.headers) config.headers = {};
-        config.headers.authorization = `Bearer ${this.appSessionToken}`;
-        if(this.userSessionToken) config.headers.cookie = `user_token=${this.userSessionToken}`;
+        config.headers.authorization = `Bearer ${this.userSessionToken || this.appSessionToken}`;
 
         // send http request to core and return response
         return await axios({ method: httpMethod, url, data, ...config });
