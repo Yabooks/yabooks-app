@@ -15,6 +15,11 @@ class YabooksApp
         return this.appDetails._id;
     }
 
+    isSecondaryInstance()
+    {
+        return String(process.env.YABOOKS_IS_SECONDARY_INSTANCE).toLowerCase() === "true";
+    }
+
     async app(appId) // provides a possibility to access other apps
     {
         let req = await this.get(`/api/v1/apps/${appId}`);
