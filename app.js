@@ -1,4 +1,4 @@
-const axios = require("axios"), SqlString = require("sqlstring-sqlite");
+const axios = require("axios"), SqlString = require("sqlstring-sqlite"), log = require("./logger.js");
 
 class YabooksApp
 {
@@ -138,6 +138,26 @@ class YabooksApp
         let query = SqlString.format(sql, params), isSelect = query.toLowerCase().includes("select");
         query = await this.post(`/api/v1/documents/${documentId}/sqlite?results=${isSelect}`, query, { headers: { "content-type": "application/sql" } });
         return query.data;
+    }
+
+    debug()
+    {
+        log("DEBUG", arguments);
+    }
+
+    info()
+    {
+        log("INFO", arguments);
+    }
+
+    warn()
+    {
+        log("WARN", arguments);
+    }
+
+    error()
+    {
+        log("ERROR", arguments);
     }
 }
 
