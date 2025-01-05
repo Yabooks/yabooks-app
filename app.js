@@ -140,6 +140,14 @@ class YabooksApp
         return query.data;
     }
 
+    async documents(businessId, pipeline = [])
+    {
+        let query = await this.post(`/api/v1/businesses/${businessId}/documents/query`,
+            JSON.stringify(pipeline), { headers: { "content-type": "application/json" } });
+        return query.data;
+
+    }
+
     debug()
     {
         log("DEBUG", arguments);
