@@ -1,5 +1,8 @@
 const { createApp, ref, computed } = (typeof Vue === "undefined") ? require("vue") : Vue;
 
+/**
+ * <searchable-dropdown :options="[]" value="_id" label="display_name" v-model:selected="data"></searchable-dropdown>
+ */
 const SearchableDropdown = (
 {
     props:
