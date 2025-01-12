@@ -1,4 +1,4 @@
-const { createApp, ref, computed } = (typeof Vue === "undefined") ? require("vue") : Vue;
+const { createApp, ref, watch, toRefs, computed } = (typeof Vue === "undefined") ? require("vue") : Vue;
 
 /**
  * <searchable-dropdown :options="[]" value="_id" label="display_name" v-model:selected="data"></searchable-dropdown>
@@ -22,14 +22,22 @@ const SearchableDropdown = (
         options: {
             type: Array,
             required: true
+        },
+        selected: { // v-model:selected
+            default: ""
         }
     },
 
+    emits: [ "update:selected" ],
+
     template: `
         <span style="position: relative; display: inline-block">
-            <input type="text" v-model="searchQuery" :placeholder="placeholder" @focus="isOpen = true" @blur="closeDropdown" style="box-sizing: border-box" />
-            <div v-if="isOpen" style="position: absolute; top: 100%; left: 0; width: 100%; max-height: 150px; overflow-y: auto; border: 1px solid #ccc; background: #fff; z-index: 1000">
-                <div v-for="option in filteredOptions" :key="option[value]" @click="selectOption(option)" style="padding: 8px; cursor: pointer;">
+            <input type="text" v-model="searchQuery" :placeholder="placeholder"
+                @focus="isOpen = true" @blur="closeDropdown" style="box-sizing: border-box" />
+            <div v-if="isOpen" style="position: absolute; top: 100%; left: 0; width: 100%; max-height: 150px;
+                    overflow-y: auto; border: 1px solid #ccc; background: #fff; z-index: 1000">
+                <div v-for="option in filteredOptions" :key="option[value]" @click="selectOption(option)"
+                        style="padding: 8px; cursor: pointer;">
                     {{ option[label] }}
                 </div>
                 <div v-if="filteredOptions.length === 0">
@@ -42,6 +50,9 @@ const SearchableDropdown = (
     setup(props, { emit })
     {
         const searchQuery = ref("");
+        searchQuery.value = props.selected;
+        watch(toRefs(props).selected, newValue => searchQuery.value = newValue);
+
         const isOpen = ref(false), value = props.value, label = props.label;
 
         const filteredOptions = computed(_ => {
