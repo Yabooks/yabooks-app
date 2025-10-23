@@ -1,4 +1,4 @@
-const TagInput = (
+const TagsInput = (
 {
     template: `
         <span>
@@ -48,4 +48,4 @@ const TagInput = (
 });
 
 if(typeof module === "object")
-    module.exports = { TagInput };
+    module.exports = { TagsInput };
