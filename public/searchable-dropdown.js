@@ -28,7 +28,7 @@ const SearchableDropdown = (
         }
     },
 
-    emits: [ "update:selected" ],
+    emits: [ "update:selected", "change" ],
 
     template: `
         <span style="position: relative; display: inline-block">
@@ -51,7 +51,6 @@ const SearchableDropdown = (
     {
         const searchQuery = ref("");
         searchQuery.value = props.selected ?? "";
-        //watch(toRefs(props).selected, newValue => searchQuery.value = newValue);
 
         const isOpen = ref(false), value = props.value, label = props.label;
 
@@ -64,11 +63,12 @@ const SearchableDropdown = (
         const selectOption = (option) =>
         {
             emit("update:selected", option[value]);
+            emit("change");
             searchQuery.value = option[label];
             isOpen.value = false;
         };
 
-        watch(toRefs(props).options, options => // when options change, select 
+        watch(toRefs(props).options, options => // when options change
         {
             for(let option of options)
                 if(option[value] == props.selected)
