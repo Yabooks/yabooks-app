@@ -50,8 +50,8 @@ const SearchableDropdown = (
     setup(props, { emit })
     {
         const searchQuery = ref("");
-        searchQuery.value = props.selected;
-        watch(toRefs(props).selected, newValue => searchQuery.value = newValue);
+        searchQuery.value = props.selected ?? "";
+        //watch(toRefs(props).selected, newValue => searchQuery.value = newValue);
 
         const isOpen = ref(false), value = props.value, label = props.label;
 
@@ -67,6 +67,13 @@ const SearchableDropdown = (
             searchQuery.value = option[label];
             isOpen.value = false;
         };
+
+        watch(toRefs(props).options, options => // when options change, select 
+        {
+            for(let option of options)
+                if(option[value] == props.selected)
+                    searchQuery.value = option[label];
+        });
 
         const closeDropdown = () =>
         {
