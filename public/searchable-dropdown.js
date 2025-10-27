@@ -1,7 +1,9 @@
 const { createApp, ref, watch, toRefs, computed } = (typeof Vue === "undefined") ? require("vue") : Vue;
 
 /**
- * <searchable-dropdown :options="[]" value="_id" label="display_name" v-model:selected="data"></searchable-dropdown>
+ * <searchable-dropdown
+ *     :options="[]" value="_id" label="display_name"
+ *     v-model:selected="data" :autoSelectFirstMatch="false"></searchable-dropdown>
  */
 const SearchableDropdown = (
 {
@@ -25,10 +27,14 @@ const SearchableDropdown = (
         },
         selected: { // v-model:selected
             default: ""
+        },
+        autoSelectFirstMatch: {
+            type: Boolean,
+            default: false
         }
     },
 
-    emits: [ "update:selected", "change" ],
+    emits: [ "update:selected", "change", "emptied" ],
 
     template: `
         <span style="position: relative; display: inline-block">
@@ -60,14 +66,6 @@ const SearchableDropdown = (
             });
         });
 
-        const selectOption = (option) =>
-        {
-            emit("update:selected", option[value]);
-            emit("change");
-            searchQuery.value = option[label];
-            isOpen.value = false;
-        };
-
         watch(toRefs(props).options, options => // when options change
         {
             for(let option of options)
@@ -82,11 +80,31 @@ const SearchableDropdown = (
                     searchQuery.value = option[label];
         });
 
-        const closeDropdown = () =>
+        const closeDropdown = () => // onblur
         {
+            if(searchQuery.value == "")
+                emit("emptied");
+
+            else if(props.autoSelectFirstMatch)
+                for(let option of props.options)
+                    if(option[label].substring(0, searchQuery.value.length) == searchQuery.value)
+                    {
+                        searchQuery.value = option[label];
+                        emit("update:selected", option[value]);
+                        emit("change");
+                    }
+
             setTimeout(_ =>
                 isOpen.value = false,
             200); // delay to allow click event on options to register
+        };
+
+        const selectOption = (option) => // onclick
+        {
+            emit("update:selected", option[value]);
+            emit("change");
+            searchQuery.value = option[label];
+            isOpen.value = false;
         };
 
         return { searchQuery, filteredOptions, isOpen, selectOption, closeDropdown };
