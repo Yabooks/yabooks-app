@@ -14,7 +14,7 @@ const TaxCodeSelector = (
             <input type="checkbox" v-model="isTaxBase" @change="visualTaxCodeSelected" title="is tax base" />
             <searchable-dropdown
                 :options="visualTaxCodes" label="displayName" value="value"
-                v-model:selected="selectedTaxCode" @change="visualTaxCodeSelected">
+                v-model:selected="selectedTaxCode" @change="visualTaxCodeSelected" @emptied="noTaxCodeSelected">
         </span>
     `,
 
@@ -52,7 +52,7 @@ const TaxCodeSelector = (
     {
         return {
             isTaxBase: false,
-            visualTaxCodes: [ { displayName: "no tax", value: null } ],
+            visualTaxCodes: [],
             selectedTaxCode: null,
         };
     },
@@ -71,6 +71,8 @@ const TaxCodeSelector = (
     {
         onTaxCodeListUpdated()
         {
+            const isSameNumber = (a, b) => (a?.$numberDecimal ?? a) == (b?.$numberDecimal ?? b);
+
             for(let taxCode of this.tax_codes)
                 for(let subCode of (taxCode.subCodes ?? [ {} ]))
                     for(let rate of (taxCode.rates ?? [ null ]))
@@ -85,13 +87,12 @@ const TaxCodeSelector = (
                             displayName: `${filters.formatTaxCode(taxCode.code)} ${taxCode.description ?? ""} ${subCode.description ?? ""} ${rate ? `${rate}%` : ""}`.trim()
                         });
 
-                        // mark currently set value as selected
-                        if(this.tax_code == taxCode.code && this.tax_sub_code == subCode.code && this.tax_percent == rate)
+                        if(this.tax_code == taxCode.code && this.tax_sub_code == subCode.code && isSameNumber(this.tax_percent, rate))
                         {
                             this.isTaxBase = false;
                             this.selectedTaxCode = this.visualTaxCodes[this.visualTaxCodes.length - 1].value;
                         }
-                        else if(this.tax_code_base == taxCode.code && this.tax_sub_code_base == subCode.code && this.tax_percent == rate)
+                        else if(this.tax_code_base == taxCode.code && this.tax_sub_code_base == subCode.code && isSameNumber(this.tax_percent, rate))
                         {
                             this.isTaxBase = true;
                             this.selectedTaxCode = this.visualTaxCodes[this.visualTaxCodes.length - 1].value;
@@ -107,6 +108,16 @@ const TaxCodeSelector = (
             this.$emit("update:tax_sub_code", this.isTaxBase ? null : this.selectedTaxCode.sub_code);
             this.$emit("update:tax_sub_code_base", this.isTaxBase ? this.selectedTaxCode.sub_code : null);
             this.$emit("update:tax_percent",this.selectedTaxCode.percent);
+            this.$emit("change"); // fire @change
+        },
+
+        noTaxCodeSelected()
+        {
+            this.$emit("update:tax_code", null);
+            this.$emit("update:tax_code_base", null);
+            this.$emit("update:tax_sub_code", null);
+            this.$emit("update:tax_sub_code_base", null);
+            this.$emit("update:tax_percent", null);
             this.$emit("change"); // fire @change
         }
     }
