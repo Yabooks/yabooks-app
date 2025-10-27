@@ -75,6 +75,13 @@ const SearchableDropdown = (
                     searchQuery.value = option[label];
         });
 
+        watch(toRefs(props).selected, selected => // when model changes
+        {
+            for(let option of props.options)
+                if(option[value] == selected)
+                    searchQuery.value = option[label];
+        });
+
         const closeDropdown = () =>
         {
             setTimeout(_ =>
