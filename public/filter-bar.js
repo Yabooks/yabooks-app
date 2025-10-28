@@ -1,5 +1,9 @@
 const { ref, computed } = (typeof Vue === "undefined") ? require("vue") : Vue;
 
+/* <filter-bar :keys="[ 'name', 'date', 'posted' ]" :types="[ 'text', 'datetime-local', 'checkbox' ]"
+ *     @update="filterApplied()"></filter-bar>
+ */
+
 class Rule
 {
     constructor(key, operator, value)
@@ -15,6 +19,12 @@ class Rule
         let query = {};
         query[this.key] = {};
         query[this.key][this.operator.mongo] = this.value;
+
+        if(this.keyType == "checkbox" && this.value == "on")
+            this.value = true;
+        if(this.keyType == "checkbox" && this.value == "off")
+            this.value = false;
+
         return query;
     }
 };
@@ -102,7 +112,7 @@ const FilterBarGroup = (
             <div v-for="(rule, index) in self.rules" :key="index" style="display: inline-block">
                 <span v-if="rule.type == 'rule'">
                     <span>
-                        <select v-model="rule.key" style="padding: 8px; border-radius: 5px; border: 1px solid #ccc; font-size: 14px; margin: 0 5px 0 5px">
+                        <select v-model="rule.key" @change="rule.keyType = getType(rule.key)" style="padding: 8px; border-radius: 5px; border: 1px solid #ccc; font-size: 14px; margin: 0 5px 0 5px">
                             <option v-for="key in keys" :key="key" :value="key">
                                 {{ key }}
                             </option>
@@ -195,7 +205,7 @@ const FilterBar = (
     },
 
     template: `
-        <div style="gap: 10px; background: #f7f9fc; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1)">
+        <div style="gap: 10px; background: #f7f9fc; padding: 10px; text-align: center; border-radius: 10px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1)">
             <filter-bar-group :keys="keys" :operators="operators" :types="types" :self="self"></filter-bar-group>
             <button @click="applyFilters" style="padding: 8px 12px; border: none; border-radius: 5px; background-color: #F98F5E; color: white; cursor: pointer; font-size: 14px">
                 &#x2714;&#xFE0F;
