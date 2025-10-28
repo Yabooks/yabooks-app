@@ -24,6 +24,8 @@ class Rule
             this.value = true;
         if(this.keyType == "checkbox" && this.value == "off")
             this.value = false;
+        if(this.keyType == "datetime-local")
+            this.value = { $date: this.value };
 
         return query;
     }
