@@ -174,7 +174,7 @@ const FilterBar = (
             type: Array,
             default: [
                 { display: '\u003d', mongo: "$eq" },
-                { display: '\u2260', mongo: "$neq" },
+                { display: '\u2260', mongo: "$ne" },
                 { display: '\u003c', mongo: "$lt" },
                 { display: '\u2264', mongo: "$lte" },
                 { display: '\u003e', mongo: "$gt" },
