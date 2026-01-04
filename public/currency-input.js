@@ -1,3 +1,7 @@
+/*
+    <currency-input locale="de-AT" currency="EUR" v-model="price" />
+*/
+
 const parseRepresentationValue = (representationValue, locale = "en-US") =>
 {
     // Determine the decimal separator of the used
@@ -47,7 +51,7 @@ const CurrencyInput = (
             default: "USD"
         },
         modelValue: {
-            type: Object,
+            //type: Object,
             required: true
         }
     },
@@ -73,6 +77,8 @@ const CurrencyInput = (
 
             this.$emit("update:modelValue", parsed);
             this.modelValue = parsed;
+
+            this.$emit("change", parsed);
         }
     }
 });
