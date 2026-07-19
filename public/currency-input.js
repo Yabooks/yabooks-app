@@ -34,7 +34,7 @@ const CurrencyInput = (
 {
     template: `
         <span>
-            <input type="text" v-model="representationValue" @change="onRepresentationUpdated" style="text-align: right" />
+            <input type="text" v-model="representationValue" @change="onRepresentationUpdated" style="text-align: right" :disabled="disabled" />
         </span>
     `,
 
@@ -53,6 +53,10 @@ const CurrencyInput = (
         modelValue: {
             //type: Object,
             required: true
+        },
+        disabled: {
+            required: false,
+            default: false
         }
     },
 

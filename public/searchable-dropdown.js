@@ -31,6 +31,10 @@ const SearchableDropdown = (
         autoSelectFirstMatch: {
             type: Boolean,
             default: false
+        },
+        disabled: {
+            required: false,
+            default: false
         }
     },
 
@@ -39,8 +43,8 @@ const SearchableDropdown = (
     template: `
         <span style="position: relative; display: inline-block">
             <input type="text" v-model="searchQuery" :placeholder="placeholder"
-                @focus="isOpen = true" @blur="closeDropdown" style="box-sizing: border-box" />
-            <div v-if="isOpen" style="position: absolute; top: 100%; left: 0; width: 100%; max-height: 150px;
+                @focus="isOpen = true" @blur="closeDropdown" style="box-sizing: border-box" :disabled="disabled" />
+            <div v-if="isOpen && !disabled" style="position: absolute; top: 100%; left: 0; width: 100%; max-height: 150px;
                     overflow-y: auto; border: 1px solid #ccc; background: #fff; z-index: 1000">
                 <div v-for="option in filteredOptions" :key="option[value]" @click="selectOption(option)"
                         style="padding: 8px; cursor: pointer;">
